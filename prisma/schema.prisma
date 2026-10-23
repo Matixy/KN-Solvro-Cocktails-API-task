@@ -1,0 +1,96 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+// --- ENUMS ---
+enum Role {
+    USER
+    ADMIN
+}
+
+// --- MODELS ---
+
+model User {
+    // attributes
+    id       String @id @default(uuid()) @db.Uuid //primary key
+    email    String @unique @db.VarChar(255)
+    password String @db.VarChar(255)
+    role     Role   @default(USER)
+
+    // log timestamps
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // relation fields
+    cocktails Cocktail[] // 1 to N relation
+}
+
+model CocktailCategory {
+    // attributes
+    id   String @id @default(uuid()) @db.Uuid //primary key
+    name String @unique @db.VarChar(100)
+
+    // relation fields
+    cocktails Cocktail[] // 1 to N relation
+}
+
+model Cocktail {
+    // attributes
+    id     String @id @default(uuid()) @db.Uuid //primary key
+    name   String @unique @db.VarChar(100)
+    recipe String @db.Text
+
+    // log timestamps
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // relations
+
+    // CocktailCategory relation
+    categoryId String           @db.Uuid
+    category   CocktailCategory @relation(fields: [categoryId], references: [id])
+
+    // User relation
+    createdBy String @db.Uuid
+    author    User   @relation(fields: [createdBy], references: [id])
+
+    // relation fields
+    ingredients CocktailIngredient[] // 1 to N relation
+}
+
+model Ingredient {
+    // attributes
+    id          String  @id @default(uuid()) @db.Uuid //primary key
+    name        String  @unique @db.VarChar(100)
+    description String  @db.Text
+    alcohol     Boolean
+    photoUrl    String  @db.VarChar(255)
+
+    // log timestamps
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // relation fields
+    cocktails CocktailIngredient[] // 1 to N relation
+}
+
+// junction table
+model CocktailIngredient {
+    // attributes
+    cocktailId   String  @db.Uuid //primary key
+    ingredientId String  @db.Uuid //primary key
+    amount       Decimal @db.Decimal(10, 2)
+    unit         String  @db.VarChar(100)
+
+    // relations
+
+    // Cascade delete record when a cocktail or ingredient are deleted to provide integrity
+    cocktail   Cocktail   @relation(fields: [cocktailId], references: [id], onDelete: Cascade)
+    ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+    @@id([cocktailId, ingredientId]) // define composite primary key (cocktailId, ingredientId)
+}
