@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsNumber, IsPositive } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsNumber, IsPositive, Max, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 // internal dto for single cocktail ingredient
@@ -33,12 +33,14 @@ export class CocktailIngredientDto {
     // propety decorator for swagger doc
     @ApiProperty({
         description: 'The unit of the ingredient amount',
-        example: 'ml'
+        example: 'ml',
+        maxLength: 100,
     })
 
     // validation decorators
     @IsString()
     @IsNotEmpty()
+    @MaxLength(100)
 
     unit: string;
 }

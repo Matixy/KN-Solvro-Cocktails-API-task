@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ArrayMinSize, arrayMinSize, IsArray, IsNotEmpty, IsString, IsUUID, MaxLength, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsNotEmpty, IsString, IsUUID, MaxLength, ValidateNested } from "class-validator";
 import { CocktailIngredientDto } from "./cocktail-ingredient.dto";
 import { Type } from "class-transformer";
 
@@ -49,7 +49,7 @@ export class CreateCocktailDto {
     // propety decorator for swagger doc
     @ApiProperty({
         description: 'List of ingredients with unit & ammount',
-        example: [CocktailIngredientDto]
+        type: [CocktailIngredientDto]
     })
     @IsArray()
     @ArrayMinSize(1)
@@ -57,4 +57,9 @@ export class CreateCocktailDto {
     @Type(() => CocktailIngredientDto) // transform each item in the array to instance of CocktailIngredientDto
 
     ingredients: CocktailIngredientDto[];
+
+    // temporary resolve for user id until authentication is implemented
+    @IsUUID('4')
+    @IsNotEmpty()
+    userId: string;
 }
