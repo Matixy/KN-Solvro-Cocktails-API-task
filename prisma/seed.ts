@@ -72,7 +72,7 @@ async function main() {
         where: { name: "Mint" },
         update: {},
         create: {
-            name: "Mint Leaves",
+            name: "Mint",
             description: "Fresh leaves from the mint plant.",
             alcohol: false,
             photoUrl: "https://example.com/mint-leaves.jpg",
