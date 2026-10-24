@@ -4,6 +4,7 @@ import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Ingredient, Prisma } from '@prisma/client';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
+import { PaginationUtil } from '../common/pagination/pagination-util';
 
 @Injectable()
 export class IngredientsService {
@@ -39,19 +40,7 @@ export class IngredientsService {
       this.prisma.ingredient.count(),
     ]);
 
-    const totalPages = Math.ceil(totalItems / itemsPerPage); // calculate total pages
-
-    return {
-      data,
-      meta: { // PaginationMeta object is used
-        totalItems,
-        itemsPerPage,
-        currentPage: page,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
-    };
+    return PaginationUtil.buildPaginationItem<Ingredient>(data, totalItems, page, itemsPerPage);
   }
 
   async findOne(id: string): Promise<Ingredient> {

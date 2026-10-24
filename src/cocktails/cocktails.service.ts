@@ -4,6 +4,7 @@ import { UpdateCocktailDto } from "./dto/update-cocktail.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { Cocktail, Prisma } from "@prisma/client";
 import { PaginationItem } from "../common/pagination/pagination-item.interface";
+import { PaginationUtil } from "../common/pagination/pagination-util";
 
 @Injectable()
 export class CocktailsService {
@@ -75,19 +76,7 @@ export class CocktailsService {
         this.prisma.cocktail.count()
     ]);
 
-    const totalPages = Math.ceil(totalItems / itemsPerPage) // calculate total pages
-
-    return {
-        data,
-        meta: { // PaginationMeta object is used
-            totalItems,
-            itemsPerPage,
-            currentPage: page,
-            totalPages,
-            hasNextPage: page < totalPages,
-            hasPreviousPage: page > 1,
-        },
-    };
+    return PaginationUtil.buildPaginationItem<Cocktail>(data, totalItems, page, itemsPerPage);
   }
 
   async findOne(id: string): Promise<Cocktail> {
