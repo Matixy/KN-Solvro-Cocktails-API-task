@@ -4,7 +4,6 @@ import { UpdateCocktailDto } from "./dto/update-cocktail.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { Cocktail, Prisma } from "@prisma/client";
 import { PaginationItem } from "../common/pagination/pagination-item.interface";
-import { take } from "rxjs";
 
 @Injectable()
 export class CocktailsService {
@@ -44,9 +43,9 @@ export class CocktailsService {
 
             return newCocktail;
         } catch (error) {
-            // handle unique constraint violation error (P2002) for ingredient name
+            // handle unique constraint violation error (P2002) for cocktail name
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException('Ingredient with name '+ createCocktailDto.name + ' already exists.');
+                throw new ConflictException('Cocktail with name '+ createCocktailDto.name + ' already exists.');
             }
         
             // rethrow other errors
