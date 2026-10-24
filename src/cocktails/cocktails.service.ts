@@ -127,8 +127,6 @@ export class CocktailsService {
 
             // if categoryId is provided, connect the cocktail to the new category
             ...(categoryId && { category: { connect: { id: categoryId }}}),
-            // if ingredients are provided, update the cocktail ingredients
-            ...(createdBy && { createdBy: createdBy}),
 
             ...(ingredients && {
                 ingredients: {
