@@ -1,26 +1,93 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Ingredient, Prisma } from '@prisma/client';
+import { PaginationItem } from '../common/pagination/pagination-item.interface';
 
 @Injectable()
 export class IngredientsService {
-  create(createIngredientDto: CreateIngredientDto) {
-    return 'This action adds a new ingredient';
+  // hermetic inject the PrismaService to interact with the database
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createIngredientDto: CreateIngredientDto): Promise<Ingredient> {
+    try {
+      return await this.prisma.ingredient.create({
+        data: createIngredientDto,
+      });
+    } catch (error) {
+
+      // handle unique constraint violation error (P2002) for ingredient name
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Ingredient with name '+ createIngredientDto.name + ' already exists.');
+      }
+
+      // rethrow other errors
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all ingredients`;
+  async findAll(page: number, itemsPerPage: number): Promise<PaginationItem<Ingredient>> {
+    const skip = (page - 1) * itemsPerPage;
+
+    const [data, totalItems] = await Promise.all([
+      this.prisma.ingredient.findMany({
+        skip: skip,
+        take: itemsPerPage,
+        orderBy: { name: 'asc' }, // order by name ascending
+      }),
+      this.prisma.ingredient.count(),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage); // calculate total pages
+
+    return {
+      data,
+      meta: {
+        totalItems,
+        itemsPerPage,
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ingredient`;
+  async findOne(id: string): Promise<Ingredient> {
+    const ingredient = await this.prisma.ingredient.findUnique({ where: { id } });
+
+    if (!ingredient) {
+      throw new NotFoundException('Ingredient with id ' + id + ' not found.'); // throw 404 error if ingredient not found
+    }
+
+    return ingredient;
   }
 
-  update(id: number, updateIngredientDto: UpdateIngredientDto) {
-    return `This action updates a #${id} ingredient`;
+  async update(id: string, updateIngredientDto: UpdateIngredientDto): Promise<Ingredient> {
+    await this.findOne(id); // check if ingredient exists using the findOne method
+
+    try {
+      return await this.prisma.ingredient.update({
+        where: { id },
+        data: updateIngredientDto,
+      });
+    } catch (error) {
+      // handle unique constraint violation error (P2002) for ingredient name
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Ingredient with name '+ updateIngredientDto.name + ' already exists.');
+      }
+
+      // rethrow other errors
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ingredient`;
+  async remove(id: string): Promise<void> {
+    await this.findOne(id); // check if ingredient exists using the findOne method
+
+    await this.prisma.ingredient.delete({
+      where: { id },
+    });
   }
 }
