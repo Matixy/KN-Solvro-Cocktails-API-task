@@ -49,13 +49,18 @@ export class IngredientsService {
       [sortBy]: sortOrder, // dynamically set sort and order based on the query parameters
     };
 
+    const whereClause = this.createWhereClauseObject(query);
+
     const [data, totalItems] = await Promise.all([
       this.prisma.ingredient.findMany({
         skip: skip,
         take: itemsPerPage,
         orderBy: orderByClause, // order by the dynamically set column and order
+        where: whereClause, // filter by the dynamically created where clause
       }),
-      this.prisma.ingredient.count(),
+      this.prisma.ingredient.count({
+        where: whereClause,
+      }),
     ]);
 
     return PaginationUtil.buildPaginationItem<Ingredient>(
@@ -113,5 +118,50 @@ export class IngredientsService {
     await this.prisma.ingredient.delete({
       where: { id },
     });
+  }
+
+  // helper methods
+  private createWhereClauseObject = (query: FindIngredientsQueryDto): Prisma.IngredientWhereInput => {
+    const { name, isAlcoholic, createdAfter, createdBefore, updatedAfter, updatedBefore } = query
+    const whereClause: Prisma.IngredientWhereInput = {};
+
+    // filter by name
+    if (name) {
+      whereClause.name = {
+        contains: name,
+        mode: "insensitive", // case-insensitive search
+      };
+    }
+
+    // filter by alcohol content
+    if (isAlcoholic !== undefined) {
+      whereClause.alcohol = isAlcoholic;
+    }
+
+    // filter by creation date
+    if (createdAfter || createdBefore) {
+      whereClause.createdAt = {}; // initialize the createdAt filter object
+
+      if (createdAfter) {
+        whereClause.createdAt.gte = createdAfter; // >= createdAfter
+      }
+      if (createdBefore) {
+        whereClause.createdAt.lte = createdBefore; // <= createdBefore
+      }
+    }
+
+    // filter by updated date
+    if (updatedAfter || updatedBefore) {
+      whereClause.updatedAt = {}; // initialize the updatedAt filter object
+
+      if (updatedAfter) {
+        whereClause.updatedAt.gte = updatedAfter; // >= updatedAfter
+      }
+      if (updatedBefore) {
+        whereClause.updatedAt.lte = updatedBefore; // <= updatedBefore
+      }
+    }
+
+    return whereClause;
   }
 }
