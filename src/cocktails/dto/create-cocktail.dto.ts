@@ -61,5 +61,5 @@ export class CreateCocktailDto {
     // temporary resolve for user id until authentication is implemented
     @IsUUID('4')
     @IsNotEmpty()
-    userId: string;
+    createdBy: string;
 }
