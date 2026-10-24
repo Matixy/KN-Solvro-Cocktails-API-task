@@ -59,9 +59,7 @@ export class CocktailsService {
     const { page, itemsPerPage, sortBy, sortOrder } = query;
     const skip = (page - 1) * itemsPerPage;
 
-    const orderByClause: Prisma.CocktailOrderByWithRelationInput = {
-        [sortBy]: sortOrder // dynamically set sort and order based on the query parameters
-    };
+    const orderByClause: Prisma.CocktailOrderByWithRelationInput = {};
 
     if (sortBy === CocktailSortBy.CATEGORY) {
         orderByClause.category = { name: sortOrder }; // order by category name if sortBy is category
@@ -69,12 +67,16 @@ export class CocktailsService {
         orderByClause[sortBy] = sortOrder; // order by the specified column and order
     }
 
+    // filter clausle 
+    const whereClause = this.createWhereClauseObject(query);
+
+
     const [data, totalItems] = await Promise.all([
         this.prisma.cocktail.findMany({
             skip: skip,
             take: itemsPerPage,
             orderBy: orderByClause, // use the dynamically generated order by clause
-
+            where: whereClause, // use the dynamically generated where clause
             // include category and ingredients with details
             include: {
                 category: true,
@@ -85,7 +87,9 @@ export class CocktailsService {
                 },
             },
         }),
-        this.prisma.cocktail.count()
+        this.prisma.cocktail.count({
+            where: whereClause,
+        })
     ]);
 
     return PaginationUtil.buildPaginationItem<Cocktail>(data, totalItems, page, itemsPerPage);
@@ -172,5 +176,64 @@ export class CocktailsService {
     await this.prisma.cocktail.delete({ 
         where: { id } 
     });
+  }
+
+  // helper methods
+  private createWhereClauseObject = (query: FindCocktailsQueryDto): Prisma.CocktailWhereInput => {
+    const { name, categoryId, categoryName, isAlcoholic, createdAfter, createdBefore, updatedAfter, updatedBefore } = query
+    const whereClause: Prisma.CocktailWhereInput = {};
+
+    // filter by name
+    if (name) {
+        whereClause.name = {
+            contains: name,
+            mode: "insensitive", // case-insensitive search
+        };
+    }
+
+    // filter by category id
+    if (categoryId) {
+        whereClause.categoryId = categoryId;
+    }
+
+    // filter by category name- search in related table
+    if (categoryName) {
+        whereClause.category = {
+            name: { contains: categoryName, mode: "insensitive" }, // case-insensitive search
+        };
+    }
+
+    // filter by alcoholic ingredients
+    if (isAlcoholic !== undefined) {
+        whereClause.ingredients = isAlcoholic 
+            ? { some: { ingredient: { alcohol: true } } } 
+            : { none: { ingredient: { alcohol: true } } };
+    }
+
+        // filter by creation date
+    if (createdAfter || createdBefore) {
+        whereClause.createdAt = {}; // initialize the createdAt filter object
+
+      if (createdAfter) {
+        whereClause.createdAt.gte = createdAfter; // >= createdAfter
+      }
+      if (createdBefore) {
+        whereClause.createdAt.lte = createdBefore; // <= createdBefore
+      }
+    }
+
+    // filter by updated date
+    if (updatedAfter || updatedBefore) {
+      whereClause.updatedAt = {}; // initialize the updatedAt filter object
+
+      if (updatedAfter) {
+        whereClause.updatedAt.gte = updatedAfter; // >= updatedAfter
+      }
+      if (updatedBefore) {
+        whereClause.updatedAt.lte = updatedBefore; // <= updatedBefore
+      }
+    }
+
+    return whereClause;
   }
 }
