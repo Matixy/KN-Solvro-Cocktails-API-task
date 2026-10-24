@@ -6,7 +6,7 @@ export class CreateIngredientDto {
     // propety decorator for swagger doc
     @ApiProperty({ 
         description: 'The name of the ingredient',
-        example: 'Fresh Mint',
+        example: 'Mint',
         maxLength: 100,
     })
 
@@ -21,7 +21,7 @@ export class CreateIngredientDto {
     // propety decorator for swagger doc
     @ApiProperty({
         description: 'The description of the ingredient',
-        example: 'Green mint leaves',
+        example: 'Green fresh mint leaves',
     })
 
     // validation decorators
