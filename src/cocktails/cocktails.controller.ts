@@ -6,6 +6,7 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cocktail } from '@prisma/client';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
 import { PaginationQueryDto } from '../common/pagination/dto/pagintaion-query.dto';
+import { FindCocktailsQueryDto } from './dto/find-cocktails-query.dto';
 
 // define the API tags for the Cocktails controller in swagger doc
 @ApiTags('Cocktails')
@@ -27,8 +28,8 @@ export class CocktailsController {
   // docs for swagger
   @ApiOperation({ summary: 'Get a paginated list of cocktails' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns a paginated list of cocktails.' })
-  async findAll(@Query() query: PaginationQueryDto): Promise<PaginationItem<Cocktail>> {
-    return this.cocktailsService.findAll(query.page, query.itemsPerPage);
+  async findAll(@Query() query: FindCocktailsQueryDto): Promise<PaginationItem<Cocktail>> {
+    return this.cocktailsService.findAll(query);
   }
 
   @Get(':id')

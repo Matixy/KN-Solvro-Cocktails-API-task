@@ -5,6 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { Cocktail, Prisma } from "@prisma/client";
 import { PaginationItem } from "../common/pagination/pagination-item.interface";
 import { PaginationUtil } from "../common/pagination/pagination-util";
+import { CocktailSortBy, FindCocktailsQueryDto } from "./dto/find-cocktails-query.dto";
 
 @Injectable()
 export class CocktailsService {
@@ -54,14 +55,25 @@ export class CocktailsService {
         }
   }
 
-  async findAll(page: number, itemsPerPage: number): Promise<PaginationItem<Cocktail>> {
+  async findAll(query: FindCocktailsQueryDto): Promise<PaginationItem<Cocktail>> {
+    const { page, itemsPerPage, sortBy, sortOrder } = query;
     const skip = (page - 1) * itemsPerPage;
+
+    const orderByClause: Prisma.CocktailOrderByWithRelationInput = {
+        [sortBy]: sortOrder // dynamically set sort and order based on the query parameters
+    };
+
+    if (sortBy === CocktailSortBy.CATEGORY) {
+        orderByClause.category = { name: sortOrder }; // order by category name if sortBy is category
+    } else {
+        orderByClause[sortBy] = sortOrder; // order by the specified column and order
+    }
 
     const [data, totalItems] = await Promise.all([
         this.prisma.cocktail.findMany({
             skip: skip,
             take: itemsPerPage,
-            orderBy: { name: 'asc' }, // order by name ascending
+            orderBy: orderByClause, // use the dynamically generated order by clause
 
             // include category and ingredients with details
             include: {
@@ -142,7 +154,11 @@ export class CocktailsService {
     } catch (error) {
         // handle unique constraint violation error (P2002) for cocktail name
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-            throw new ConflictException('Cocktail with name '+ updateCocktailDto.name + ' already exists.');
+            const errorMessage = updateCocktailDto.name 
+                ? `Cocktail with name '${updateCocktailDto.name}' already exists.` 
+                : 'Cocktail with provided unique data already exists.';
+                
+            throw new ConflictException(errorMessage);
         }
 
         // rethrow other errors
