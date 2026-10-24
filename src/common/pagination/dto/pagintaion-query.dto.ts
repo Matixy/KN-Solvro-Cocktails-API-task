@@ -1,9 +1,6 @@
-import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Type } from "class-transformer/types/decorators/type.decorator";
-import { IsOptional } from "class-validator/types/decorator/common/IsOptional";
-import { Max } from "class-validator/types/decorator/number/Max";
-import { Min } from "class-validator/types/decorator/number/Min";
-import { IsInt } from "class-validator/types/decorator/typechecker/IsInt";
+import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PaginationQueryDto {
     // PAGE NUMBER
