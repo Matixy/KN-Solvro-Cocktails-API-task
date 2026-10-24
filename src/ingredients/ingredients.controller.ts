@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseIntPipe, DefaultValuePipe, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseIntPipe, DefaultValuePipe, ParseUUIDPipe, HttpCode } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
@@ -56,6 +56,7 @@ export class IngredientsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT) // set the response status code to 204 No Content
   // docs for swagger
   @ApiOperation({ summary: 'Delete an ingredient by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the ingredient'})
