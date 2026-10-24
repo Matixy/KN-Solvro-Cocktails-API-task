@@ -5,7 +5,7 @@ import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Ingredient } from '@prisma/client';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
-import { PaginationQueryDto } from '../common/pagination/dto/pagintaion-query.dto';
+import { FindIngredientsQueryDto } from './dto/find-ingredients-query.dto';
 
 // define the API tags for the Ingredients controller in swagger doc
 @ApiTags('Ingredients')
@@ -27,8 +27,8 @@ export class IngredientsController {
   // docs for swagger
   @ApiOperation({ summary: 'Get a paginated list of ingredients' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns a paginated list of ingredients.' })
-  async findAll(@Query() query: PaginationQueryDto): Promise<PaginationItem<Ingredient>> {
-    return this.ingredientsService.findAll(query.page, query.itemsPerPage);
+  async findAll(@Query() query: FindIngredientsQueryDto): Promise<PaginationItem<Ingredient>> {
+    return this.ingredientsService.findAll(query);
   }
 
   @Get(':id')

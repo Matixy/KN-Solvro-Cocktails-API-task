@@ -1,6 +1,12 @@
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+
+// define the sort order enum for pagination
+export enum SortOrder {
+    ASC = 'asc',
+    DESC = 'desc',
+}
 
 export class PaginationQueryDto {
     // PAGE NUMBER
@@ -35,4 +41,14 @@ export class PaginationQueryDto {
     @IsOptional()
 
     itemsPerPage: number = 10; // default value for items per page
+
+    // SORT ORDER
+    // property decorator for swagger doc
+    @ApiPropertyOptional({ enum: SortOrder, default: SortOrder.ASC, description: "Sort order for the results (asc or desc)" })
+
+    // validation decorators
+    @IsEnum(SortOrder)
+    @IsOptional()
+
+    sortOrder: SortOrder = SortOrder.ASC; // default sort order
 }
