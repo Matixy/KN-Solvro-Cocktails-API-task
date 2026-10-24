@@ -43,7 +43,7 @@ export class IngredientsService {
 
     return {
       data,
-      meta: {
+      meta: { // PaginationMeta object is used
         totalItems,
         itemsPerPage,
         currentPage: page,
