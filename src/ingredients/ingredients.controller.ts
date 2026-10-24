@@ -3,7 +3,7 @@ import { IngredientsService } from './ingredients.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Ingredient } from './entities/ingredient.entity';
+import { Ingredient } from '@prisma/client';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
 import { PaginationQueryDto } from '../common/pagination/dto/pagintaion-query.dto';
 
@@ -48,7 +48,7 @@ export class IngredientsController {
   @ApiParam({ name: 'id', description: 'The ID of the ingredient'})
   @ApiResponse({ status: HttpStatus.OK, description: 'The ingredient has been successfully updated.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Ingredient not found.' })
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string, 
     @Body() updateIngredientDto: UpdateIngredientDto
   ): Promise<Ingredient> {
