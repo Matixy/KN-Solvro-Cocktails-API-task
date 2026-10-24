@@ -81,7 +81,86 @@ async function main() {
 
     console.log("Ingredients seeded.");
 
-    // SEED COCKTAILS
+    // SEED USERS
+    const adminUser = await prisma.user.upsert({
+        where: { email: "admin@cocktails.local" },
+        update: {},
+        create: {
+            email: "admin@cocktails.local",
+            password: "temporary_password",
+            role: "ADMIN",
+        },
+    });
+
+    const standardUser = await prisma.user.upsert({
+        where: { email: "bartender@cocktails.local" },
+        update: {},
+        create: {
+            email: "bartender@cocktails.local",
+            password: "temporary_password",
+            role: "USER",
+        },
+    });
+
+    console.log("Users seeded.");
+
+   // SEED COCKTAILS
+    const cocktailMojito = await prisma.cocktail.upsert({
+        where: { name: "Mojito" },
+        update: {},
+        create: {
+            name: "Mojito",
+            recipe: "Muddle mint leaves with sugar syrup and lime juice. Add rum, top with crushed ice and stir.",
+            categoryId: categoryTropical.id,
+            createdBy: adminUser.id,
+            ingredients: {
+                create: [
+                    { ingredientId: ingredientRum.id, amount: 50, unit: "ml" },
+                    { ingredientId: ingredientLimeJuice.id, amount: 20, unit: "ml" },
+                    { ingredientId: ingredientSugarSyrup.id, amount: 15, unit: "ml" },
+                    { ingredientId: ingredientMint.id, amount: 10, unit: "leaves" },
+                ],
+            },
+        },
+    });
+
+    const cocktailDaiquiri = await prisma.cocktail.upsert({
+        where: { name: "Daiquiri" },
+        update: {},
+        create: {
+            name: "Daiquiri",
+            recipe: "Add all ingredients into a shaker with ice. Shake vigorously and strain into a chilled coupe glass.",
+            categoryId: categoryClassic.id,
+            createdBy: standardUser.id,
+            ingredients: {
+                create: [
+                    { ingredientId: ingredientRum.id, amount: 60, unit: "ml" },
+                    { ingredientId: ingredientLimeJuice.id, amount: 30, unit: "ml" },
+                    { ingredientId: ingredientSugarSyrup.id, amount: 15, unit: "ml" },
+                ],
+            },
+        },
+    });
+
+    const cocktailVodkaGimlet = await prisma.cocktail.upsert({
+        where: { name: "Vodka Gimlet" },
+        update: {},
+        create: {
+            name: "Vodka Gimlet",
+            recipe: "Shake vodka and lime juice with ice. Strain into a glass and garnish with a lime wheel.",
+            categoryId: categoryClassic.id,
+            createdBy: adminUser.id,
+            ingredients: {
+                create: [
+                    { ingredientId: ingredientVodka.id, amount: 60, unit: "ml" },
+                    { ingredientId: ingredientLimeJuice.id, amount: 20, unit: "ml" },
+                    { ingredientId: ingredientSugarSyrup.id, amount: 10, unit: "ml" },
+                ],
+            },
+        },
+    });
+
+    console.log("Cocktails seeded.");
 }
 
 main()    
