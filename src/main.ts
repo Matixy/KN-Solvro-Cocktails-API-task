@@ -42,7 +42,7 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("api/docs", app, document); // documentation- /api/docs
+    SwaggerModule.setup("api", app, document); // documentation- /api
 
     // start app on specified port
     const port = process.env.PORT as string || "3000";
@@ -50,6 +50,6 @@ async function bootstrap() {
 
     // log the application url and swagger docs url
     logger.log(`Application is running on: http://localhost:${port}/api`);
-    logger.log(`Swagger docs available at: http://localhost:${port}/api/docs`);
+    logger.log(`Swagger docs available at: http://localhost:${port}/api`);
 }
 bootstrap();
