@@ -91,17 +91,17 @@ Projekt posiada plik testów e2e (`test/app.e2e-spec.ts`) napisany przy użyciu 
 **Przetestowane scenariusze:**
 
 **Operacje Administratora (kategorie i składniki):**
-  1. 🔴 Zablokowanie standardowemu użytkownikowi (`USER`) możliwości utworzenia kategorii (oczekiwano: `403 Forbidden`).
-  2. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowej kategorii (oczekiwano: `201 Created`).
-  3. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowego składnika (oczekiwano: `201 Created`).
+1. 🔴 Zablokowanie standardowemu użytkownikowi (`USER`) możliwości utworzenia kategorii (oczekiwano: `403 Forbidden`).
+2. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowej kategorii (oczekiwano: `201 Created`).
+3. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowego składnika (oczekiwano: `201 Created`).
 
 **Operacje Użytkowników (zarządzanie koktajlami):**
-  4. 🔴 Zablokowanie niezalogowanemu gościowi możliwości utworzenia koktajlu (oczekiwano: `401 Unauthorized`).
-  5. 🟢 Zezwolenie zalogowanemu użytkownikowi (`USER`) na utworzenie koktajlu z załączonymi relacjami składników (oczekiwano: `201 Created`).
-  6. 🟢 Publiczny dostęp (dla wszystkich) do odczytu wygenerowanej listy koktajli (oczekiwano: `200 OK`).
-  7. 🟢 Zezwolenie twórcy (`USER`) na zaktualizowanie **własnego** koktajlu (oczekiwano: `200 OK`).
-  8. 🔴 Zablokowanie użytkownikowi (`USER`) próby nadpisania koktajlu, który został stworzony przez inną osobę / administratora (oczekiwano: `403 Forbidden`).
-  9. 🟢 Zezwolenie twórcy (`USER`) na usunięcie **własnego** koktajlu (oczekiwano: `204 No Content`).
+4. 🔴 Zablokowanie niezalogowanemu gościowi możliwości utworzenia koktajlu (oczekiwano: `401 Unauthorized`).
+5. 🟢 Zezwolenie zalogowanemu użytkownikowi (`USER`) na utworzenie koktajlu z załączonymi relacjami składników (oczekiwano: `201 Created`).
+6. 🟢 Publiczny dostęp (dla wszystkich) do odczytu wygenerowanej listy koktajli (oczekiwano: `200 OK`).
+7. 🟢 Zezwolenie twórcy (`USER`) na zaktualizowanie **własnego** koktajlu (oczekiwano: `200 OK`).
+8. 🔴 Zablokowanie użytkownikowi (`USER`) próby nadpisania koktajlu, który został stworzony przez inną osobę / administratora (oczekiwano: `403 Forbidden`).
+9. 🟢 Zezwolenie twórcy (`USER`) na usunięcie **własnego** koktajlu (oczekiwano: `204 No Content`).
 
 ---
 
