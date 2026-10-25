@@ -28,7 +28,7 @@ export class AuthService {
         const accessToken = await this.generateJwtToken(newUser);
 
         return {
-            access_token: accessToken,
+            accessToken: accessToken,
             user: newUser,
         };
     }
@@ -52,7 +52,7 @@ export class AuthService {
         const accessToken = await this.generateJwtToken(user); // generate JWT token
 
         return {
-            access_token: accessToken,
+            accessToken: accessToken,
             user,
         };
     }
