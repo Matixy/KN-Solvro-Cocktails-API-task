@@ -1,4 +1,3 @@
-```markdown
 # 🍹 Cocktail Manager API
 
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
@@ -148,4 +147,3 @@ npm run test:e2e
 ```
 
 ---
-```
