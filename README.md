@@ -90,12 +90,12 @@ Projekt posiada plik testów e2e (`test/app.e2e-spec.ts`) napisany przy użyciu 
 
 **Przetestowane scenariusze:**
 
-**Operacje Administratora (kategorie i składniki):**
+### **Operacje Administratora (kategorie i składniki):**
 1. 🔴 Zablokowanie standardowemu użytkownikowi (`USER`) możliwości utworzenia kategorii (oczekiwano: `403 Forbidden`).
 2. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowej kategorii (oczekiwano: `201 Created`).
 3. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowego składnika (oczekiwano: `201 Created`).
 
-**Operacje Użytkowników (zarządzanie koktajlami):** </br>
+### **Operacje Użytkowników (zarządzanie koktajlami):**
 4. 🔴 Zablokowanie niezalogowanemu gościowi możliwości utworzenia koktajlu (oczekiwano: `401 Unauthorized`).
 5. 🟢 Zezwolenie zalogowanemu użytkownikowi (`USER`) na utworzenie koktajlu z załączonymi relacjami składników (oczekiwano: `201 Created`).
 6. 🟢 Publiczny dostęp (dla wszystkich) do odczytu wygenerowanej listy koktajli (oczekiwano: `200 OK`).
