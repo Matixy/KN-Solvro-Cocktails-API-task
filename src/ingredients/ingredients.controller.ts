@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseIntPipe, DefaultValuePipe, ParseUUIDPipe, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseIntPipe, DefaultValuePipe, ParseUUIDPipe, HttpCode, UseGuards } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Ingredient } from '@prisma/client';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
 import { FindIngredientsQueryDto } from './dto/find-ingredients-query.dto';
+import { JWTAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 // define the API tags for the Ingredients controller in swagger doc
 @ApiTags('Ingredients')
@@ -14,8 +18,12 @@ export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Post()
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   // docs for swagger
   @ApiOperation({ summary: 'Create a new ingredient' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The ingredient has been successfully created.' })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Ingredient with this name already exists.' })
   async create(@Body() createIngredientDto: CreateIngredientDto): Promise<Ingredient> {
@@ -43,8 +51,12 @@ export class IngredientsController {
   }
 
   @Patch(':id')
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   // docs for swagger
   @ApiOperation({ summary: 'Update an ingredient by ID' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiParam({ name: 'id', description: 'The ID of the ingredient'})
   @ApiResponse({ status: HttpStatus.OK, description: 'The ingredient has been successfully updated.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Ingredient not found.' })
@@ -56,9 +68,13 @@ export class IngredientsController {
   }
 
   @Delete(':id')
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT) // set the response status code to 204 No Content
   // docs for swagger
   @ApiOperation({ summary: 'Delete an ingredient by ID' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiParam({ name: 'id', description: 'The ID of the ingredient'})
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The ingredient has been successfully deleted.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Ingredient not found.' })
