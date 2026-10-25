@@ -122,7 +122,7 @@ export class CocktailsService {
   async update(id: string, updateCocktailDto: UpdateCocktailDto, user: AuthenticatedUser): Promise<Cocktail> {
     const cocktail = await this.findOne(id); // check if cocktail exists using the findOne method
 
-    this.verifyOwenershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
+    this.verifyOwnershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
 
     // destructuring updateCocktailDto 
     const {categoryId, ingredients, ...restData } = updateCocktailDto;
@@ -177,7 +177,7 @@ export class CocktailsService {
   async remove(id: string, user: AuthenticatedUser): Promise<void> {
     const cocktail = await this.findOne(id); // check if cocktail exists using the findOne method
 
-    this.verifyOwenershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
+    this.verifyOwnershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
 
     await this.prisma.cocktail.delete({ 
         where: { id } 
@@ -243,7 +243,7 @@ export class CocktailsService {
     return whereClause;
   }
 
-  private verifyOwenershipOrAdmin(cocktail: Cocktail, user: AuthenticatedUser): void {
+  private verifyOwnershipOrAdmin(cocktail: Cocktail, user: AuthenticatedUser): void {
     const isAuthor = cocktail.createdBy === user.userId;
     const isAdmin = user.role === Role.ADMIN;
 
