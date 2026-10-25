@@ -248,7 +248,7 @@ export class CocktailsService {
     const isAdmin = user.role === Role.ADMIN;
 
     if (!isAuthor && !isAdmin) {
-      // throw 409 error if user is not the author or admin
+      // throw 403 Forbidden error if user is not the author or admin
       throw new ForbiddenException('You are not authorized to update this cocktail.');
     }
   }
