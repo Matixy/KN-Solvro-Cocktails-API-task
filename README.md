@@ -39,10 +39,9 @@ Aplikacja została wdrożona na środowisko produkcyjne.
 
 ## 🗄 Schemat Bazy Danych
 
-Architektura opiera się na relacyjnym modelu uwzględniającym operacje *nested writes* (zapisywanie do wielu tabel w jednej transakcji ACID, np. dodanie koktajlu z nowymi proporcjami składników).
+Architektura opiera się na relacyjnym modelu uwzględniającym operacje *nested writes* (zapisywanie do wielu tabel w jednej transakcji ACID).
 
 ![Schemat Bazy Danych](./docs/db_schema.png)
-*(Jeśli obraz się nie ładuje, plik schematu znajduje się w folderze `docs/db_schema.png`)*
 
 ---
 
