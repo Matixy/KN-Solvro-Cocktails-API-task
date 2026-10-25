@@ -16,9 +16,6 @@ async function bootstrap() {
             whitelist: true, // strips properties that do not have any decorators in dto
             forbidNonWhitelisted: true, // throws 400 error if in request are properties that are not in dto
             transform: true, // automatically casts types based on dto
-            transformOptions: {
-                enableImplicitConversion: true // allows implicit type conversion for primitive types
-            }
         }),
     );
 
