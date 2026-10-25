@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaPg } from '@prisma/adapter-pg';
+import * as bcrypt from 'bcrypt';
 
 // create a new client instance with the psql adapter
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL})
@@ -19,6 +20,12 @@ async function main() {
         where: { name: "Tropical" },
         update: {},
         create: { name: "Tropical" },
+    });
+
+    const categoryMocktail = await prisma.cocktailCategory.upsert({
+        where: { name: "Empty" },
+        update: {},
+        create: { name: "Empty" },
     });
 
     console.log("Cocktail categories seeded.");
@@ -82,12 +89,16 @@ async function main() {
     console.log("Ingredients seeded.");
 
     // SEED USERS
+    // hash password = passwords are same for both users
+    const saltOrRounds = 10;
+    const hashedPassword = await bcrypt.hash("Password123!", saltOrRounds);
+
     const adminUser = await prisma.user.upsert({
         where: { email: "admin@cocktails.local" },
         update: {},
         create: {
             email: "admin@cocktails.local",
-            password: "temporary_password",
+            password: hashedPassword,
             role: "ADMIN",
         },
     });
@@ -97,7 +108,17 @@ async function main() {
         update: {},
         create: {
             email: "bartender@cocktails.local",
-            password: "temporary_password",
+            password: hashedPassword,
+            role: "USER",
+        },
+    });
+
+    const guestUser = await prisma.user.upsert({
+        where: { email: "guest@cocktails.local" },
+        update: {},
+        create: {
+            email: "guest@cocktails.local",
+            password: hashedPassword,
             role: "USER",
         },
     });
