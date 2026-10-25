@@ -10,6 +10,6 @@ export interface JWTPayload {
 
 // structure of the response returned after successful login/registration
 export interface AuthResponse {
-    access_token: string; // JWT token
+    accessToken: string; // JWT token
     user: SafeUser; // user object without password
 }
