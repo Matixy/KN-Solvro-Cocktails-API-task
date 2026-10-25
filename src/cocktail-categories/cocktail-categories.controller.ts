@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseUUIDPipe, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseUUIDPipe, HttpCode, UseGuards } from '@nestjs/common';
 import { CocktailCategoriesService } from './cocktail-categories.service';
 import { CreateCocktailCategoryDto } from './dto/create-cocktail-category.dto';
 import { UpdateCocktailCategoryDto } from './dto/update-cocktail-category.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CocktailCategory } from '@prisma/client';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CocktailCategory, Role } from '@prisma/client';
 import { PaginationQueryDto } from '../common/pagination/dto/pagintaion-query.dto';
 import { PaginationItem } from '../common/pagination/pagination-item.interface';
+import { Roles } from '../common/decorators/roles.decorator';
+import { JWTAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
 
 // define the API tags for the Cocktail Categories controller in swagger doc
 @ApiTags('Cocktail Categories')
@@ -14,8 +17,12 @@ export class CocktailCategoriesController {
   constructor(private readonly cocktailCategoriesService: CocktailCategoriesService) {}
 
   @Post()
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   // docs for swagger
   @ApiOperation({ summary: 'Create a new cocktail category' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The cocktail category has been successfully created.' })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Cocktail category with this name already exists.' })
   async create(@Body() createCocktailCategoryDto: CreateCocktailCategoryDto): Promise<CocktailCategory> {
@@ -43,8 +50,12 @@ export class CocktailCategoriesController {
   }
 
   @Patch(':id')
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   // docs for swagger
   @ApiOperation({ summary: 'Update a cocktail category by ID' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiParam({ name: 'id', description: 'The ID of the cocktail category' })
   @ApiResponse({ status: HttpStatus.OK, description: 'The cocktail category has been successfully updated.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No cocktail category found.' })
@@ -53,9 +64,13 @@ export class CocktailCategoriesController {
   }
 
   @Delete(':id')
+  // apply guards to protect the route and restrict access to users with ADMIN role
+  @UseGuards(JWTAuthGuard, RolesGuard) 
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT) // set the response status code to 204 No Content
   // docs for swagger
   @ApiOperation({ summary: 'Delete a cocktail category by ID' })
+  @ApiBearerAuth() // indicate that this endpoint requires JWT authentication
   @ApiParam({ name: 'id', description: 'The ID of the cocktail category' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The cocktail category has been successfully deleted.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No cocktail category found.' })
