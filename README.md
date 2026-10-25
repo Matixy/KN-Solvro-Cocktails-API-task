@@ -95,7 +95,7 @@ Projekt posiada plik testów e2e (`test/app.e2e-spec.ts`) napisany przy użyciu 
 2. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowej kategorii (oczekiwano: `201 Created`).
 3. 🟢 Zezwolenie administratorowi (`ADMIN`) na utworzenie nowego składnika (oczekiwano: `201 Created`).
 
-**Operacje Użytkowników (zarządzanie koktajlami):**
+**Operacje Użytkowników (zarządzanie koktajlami):** </br>
 4. 🔴 Zablokowanie niezalogowanemu gościowi możliwości utworzenia koktajlu (oczekiwano: `401 Unauthorized`).
 5. 🟢 Zezwolenie zalogowanemu użytkownikowi (`USER`) na utworzenie koktajlu z załączonymi relacjami składników (oczekiwano: `201 Created`).
 6. 🟢 Publiczny dostęp (dla wszystkich) do odczytu wygenerowanej listy koktajli (oczekiwano: `200 OK`).
