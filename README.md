@@ -25,14 +25,14 @@ Aplikacja została wdrożona na środowisko produkcyjne.
 
 ## 🎯 Realizacja Wymagań
 
-✅ Pełen **CRUD** dla koktajli i składników (rozszerzony dodatkowo o kategorie).
-✅ **Relacyjna baza danych** PostgreSQL obsługiwana przez prisma ORM.
-✅ Generyczna **paginacja**, zaawansowane **sortowanie** i **filtrowanie**.
-✅ **Walidacja danych** wejściowych przy użyciu DTO i `class-validator` (w tym parsowanie URL).
-✅ **Autoryzacja JWT** z podziałem na role (USER / ADMIN).
-✅ **Własność zasobów:** Tylko autor lub administrator może edytować/usunąć koktajl.
-✅ **Testy Automatyczne e2e** używające biblioteki Supertest.
-✅ Wygenerowana dokumentacja **Swagger OpenAPI**.
+✅ Pełen **CRUD** dla koktajli i składników (rozszerzony dodatkowo o kategorie). </br>
+✅ **Relacyjna baza danych** PostgreSQL obsługiwana przez prisma ORM. </br>
+✅ Generyczna **paginacja**, zaawansowane **sortowanie** i **filtrowanie**. </br>
+✅ **Walidacja danych** wejściowych przy użyciu DTO i `class-validator` (w tym parsowanie URL). </br>
+✅ **Autoryzacja JWT** z podziałem na role (USER / ADMIN). </br>
+✅ **Własność zasobów:** Tylko autor lub administrator może edytować/usunąć koktajl. </br>
+✅ **Testy Automatyczne e2e** używające biblioteki Supertest. </br>
+✅ Wygenerowana dokumentacja **Swagger OpenAPI**. 
 
 ---
 
