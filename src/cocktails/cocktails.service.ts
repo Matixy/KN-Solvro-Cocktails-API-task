@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCocktailDto } from "./dto/create-cocktail.dto";
 import { UpdateCocktailDto } from "./dto/update-cocktail.dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -6,14 +6,16 @@ import { Cocktail, Prisma } from "@prisma/client";
 import { PaginationItem } from "../common/pagination/pagination-item.interface";
 import { PaginationUtil } from "../common/pagination/pagination-util";
 import { CocktailSortBy, FindCocktailsQueryDto } from "./dto/find-cocktails-query.dto";
+import { AuthenticatedUser } from "../auth/interfaces/authenticated-user.interface";
+import { Role } from "@prisma/client";
 
 @Injectable()
 export class CocktailsService {
     // hermetic inject the PrismaService to interact with the database
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(createCocktailDto: CreateCocktailDto): Promise<Cocktail> {
-        const { name, recipe, categoryId, ingredients, createdBy } = createCocktailDto;
+    async create(createCocktailDto: CreateCocktailDto, user: AuthenticatedUser): Promise<Cocktail> {
+        const { name, recipe, categoryId, ingredients } = createCocktailDto;
 
         try {
             // nested write to create cocktail with ingredients in one transaction
@@ -22,7 +24,7 @@ export class CocktailsService {
                     name,
                     recipe,
                     categoryId,
-                    createdBy, // TODO temporary resolve for user id until authentication is implemented
+                    createdBy: user.userId,
                     ingredients: {
                         create: ingredients.map((ingredient) => ({
                         ingredientId: ingredient.ingredientId,
@@ -117,11 +119,13 @@ export class CocktailsService {
     return cocktail;
   }
 
-  async update(id: string, updateCocktailDto: UpdateCocktailDto): Promise<Cocktail> {
-    await this.findOne(id); // check if cocktail exists using the findOne method
+  async update(id: string, updateCocktailDto: UpdateCocktailDto, user: AuthenticatedUser): Promise<Cocktail> {
+    const cocktail = await this.findOne(id); // check if cocktail exists using the findOne method
+
+    this.verifyOwenershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
 
     // destructuring updateCocktailDto 
-    const {categoryId, createdBy, ingredients, ...restData } = updateCocktailDto;
+    const {categoryId, ingredients, ...restData } = updateCocktailDto;
 
     try {
       return await this.prisma.cocktail.update({
@@ -170,8 +174,10 @@ export class CocktailsService {
     }
   }
 
-  async remove(id: string): Promise<void> {
-    await this.findOne(id); // check if cocktail exists using the findOne method
+  async remove(id: string, user: AuthenticatedUser): Promise<void> {
+    const cocktail = await this.findOne(id); // check if cocktail exists using the findOne method
+
+    this.verifyOwenershipOrAdmin(cocktail, user); // check if the user is the owner of the cocktail or has admin role
 
     await this.prisma.cocktail.delete({ 
         where: { id } 
@@ -235,5 +241,15 @@ export class CocktailsService {
     }
 
     return whereClause;
+  }
+
+  private verifyOwenershipOrAdmin(cocktail: Cocktail, user: AuthenticatedUser): void {
+    const isAuthor = cocktail.createdBy === user.userId;
+    const isAdmin = user.role === Role.ADMIN;
+
+    if (!isAuthor && !isAdmin) {
+      // throw 409 error if user is not the author or admin
+      throw new ForbiddenException('You are not authorized to update this cocktail.');
+    }
   }
 }

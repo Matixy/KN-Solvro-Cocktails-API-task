@@ -42,7 +42,7 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("api/docs", app, document); // documentation- /api/docs
+    SwaggerModule.setup("api", app, document); // documentation- /api
 
     // start app on specified port
     const port = process.env.PORT as string || "3000";

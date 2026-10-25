@@ -57,9 +57,4 @@ export class CreateCocktailDto {
     @Type(() => CocktailIngredientDto) // transform each item in the array to instance of CocktailIngredientDto
 
     ingredients: CocktailIngredientDto[];
-
-    // temporary resolve for user id until authentication is implemented
-    @IsUUID('4')
-    @IsNotEmpty()
-    createdBy: string;
 }
